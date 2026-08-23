@@ -1,0 +1,84 @@
+{
+  "name": "electron-stage-1-starter",
+  "version": "1.0.0",
+  "description": "Thực hành Electron Giai đoạn 1: Kiến trúc cốt lõi & IPC bảo mật",
+  "main": "src/main.js",
+  "scripts": {
+    "dev:vite": "vite",
+    "dev:electron": "wait-on tcp:5173 && electron .",
+    "dev": "concurrently -k -n \"VITE,ELECTRON\" -c \"cyan,magenta\" \"npm run dev:vite\" \"npm run dev:electron\"",
+    "build": "tsc && vite build",
+    "start": "npm run dev",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LeThangUIT/electron-quickstart.git"
+  },
+  "build": {
+    "appId": "com.lethanguit.electronmasterclass",
+    "productName": "Electron Masterclass",
+    "copyright": "Copyright © 2026 LeThangUIT",
+    "publish": {
+      "provider": "github",
+      "owner": "LeThangUIT",
+      "repo": "electron-quickstart"
+    },
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "dist/renderer/**/*",
+      "src/main.js",
+      "src/preload.js",
+      "src/store.js",
+      "src/renderer/notes.html",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Electron Masterclass"
+    }
+  },
+  "keywords": [
+    "electron",
+    "learning",
+    "ipc",
+    "preload"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "concurrently": "^10.0.5",
+    "cross-env": "^10.1.0",
+    "electron": "^34.2.0",
+    "electron-builder": "^26.15.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2",
+    "wait-on": "^9.1.0"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9",
+    "lucide-react": "^1.33.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  }
+}

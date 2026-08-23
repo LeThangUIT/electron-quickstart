@@ -1,0 +1,182 @@
+/* ==========================================================================
+   ELECTRON + REACT + VITE MODERN DESIGN SYSTEM (GLASSMORPHISM & THEMES)
+   ========================================================================== */
+
+:root {
+  --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+
+  /* Color Palette Default (Slate Cyber) */
+  --bg-gradient: radial-gradient(circle at top right, #1e1b4b 0%, #090d16 60%, #030712 100%);
+  --surface-glass: rgba(15, 23, 42, 0.75);
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --surface-hover: rgba(255, 255, 255, 0.04);
+  --primary-color: #38bdf8;
+  --primary-gradient: linear-gradient(135deg, #0284c7, #2563eb);
+  --accent-purple: #c084fc;
+  --accent-purple-gradient: linear-gradient(135deg, #a855f7, #6366f1);
+  --accent-green: #34d399;
+  --accent-amber: #fbbf24;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+}
+
+/* THEME: CYBERPUNK */
+body.theme-cyberpunk {
+  --bg-gradient: radial-gradient(circle at top right, #3b0764 0%, #09090b 60%, #000000 100%);
+  --surface-glass: rgba(24, 10, 40, 0.8);
+  --surface-border: rgba(236, 72, 153, 0.25);
+  --primary-color: #f43f5e;
+  --primary-gradient: linear-gradient(135deg, #ec4899, #f43f5e);
+  --accent-purple: #d946ef;
+}
+
+/* THEME: EMERALD */
+body.theme-emerald {
+  --bg-gradient: radial-gradient(circle at top right, #064e3b 0%, #022c22 60%, #01140e 100%);
+  --surface-glass: rgba(6, 40, 30, 0.8);
+  --surface-border: rgba(16, 185, 129, 0.25);
+  --primary-color: #10b981;
+  --primary-gradient: linear-gradient(135deg, #059669, #10b981);
+}
+
+/* THEME: SUNSET */
+body.theme-sunset {
+  --bg-gradient: radial-gradient(circle at top right, #7c2d12 0%, #2a0e05 60%, #120502 100%);
+  --surface-glass: rgba(45, 15, 8, 0.8);
+  --surface-border: rgba(249, 115, 22, 0.25);
+  --primary-color: #f97316;
+  --primary-gradient: linear-gradient(135deg, #ea580c, #f97316);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-main);
+  min-height: 100vh;
+  padding-top: 116px; /* Chừa khoảng trống cho Custom Titlebar (36px) + Tab Bar (40px) + Address Bar (40px) */
+  user-select: none;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Glass Card */
+.glass-card {
+  background: var(--surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-main);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: var(--primary-gradient);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+}
+.btn-primary:hover {
+  filter: brightness(1.1);
+}
+
+.btn-purple {
+  background: var(--accent-purple-gradient);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.3);
+}
+.btn-purple:hover {
+  filter: brightness(1.1);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Pulsing Online Dot */
+.pulsing-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent-green);
+  box-shadow: 0 0 8px var(--accent-green);
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}

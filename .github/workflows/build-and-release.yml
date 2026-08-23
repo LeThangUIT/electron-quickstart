@@ -1,0 +1,35 @@
+name: Build and Release Desktop App
+
+on:
+  push:
+    tags:
+      - 'v*' # Tự động kích hoạt khi tạo tag mới (ví dụ: git tag v1.1.0 && git push origin --tags)
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest] # Có thể thêm macos-latest, ubuntu-latest cho đa nền tảng
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build React Frontend
+        run: npm run build
+
+      - name: Build & Publish Installer to GitHub Releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --publish always

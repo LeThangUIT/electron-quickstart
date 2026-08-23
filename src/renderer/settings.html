@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cài Đặt Ứng Dụng (Settings Modal)</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="settings-container">
+    <!-- Header -->
+    <header class="settings-header">
+      <div class="header-icon">⚙️</div>
+      <div>
+        <h2>Cài Đặt Hệ Thống</h2>
+        <p class="subtitle">Cửa sổ con (Modal Window) & Đồng bộ Realtime</p>
+      </div>
+    </header>
+
+    <!-- Settings Form -->
+    <main class="settings-body">
+      <!-- Section 1: User Profile -->
+      <section class="form-group">
+        <label for="input-username" class="form-label">
+          <span>👤</span> Tên người dùng hiển thị
+        </label>
+        <input 
+          type="text" 
+          id="input-username" 
+          class="form-control" 
+          placeholder="Nhập tên hiển thị..."
+          value="Electron Explorer"
+        >
+      </section>
+
+      <!-- Section 2: Theme Picker -->
+      <section class="form-group">
+        <label class="form-label">
+          <span>🎨</span> Chủ đề giao diện (Theme)
+        </label>
+        <div class="theme-grid">
+          <label class="theme-option">
+            <input type="radio" name="app-theme" value="theme-default" checked>
+            <div class="theme-card theme-preview-default">
+              <div class="color-dot"></div>
+              <span>Slate Tối</span>
+            </div>
+          </label>
+
+          <label class="theme-option">
+            <input type="radio" name="app-theme" value="theme-cyberpunk">
+            <div class="theme-card theme-preview-cyberpunk">
+              <div class="color-dot"></div>
+              <span>Cyberpunk</span>
+            </div>
+          </label>
+
+          <label class="theme-option">
+            <input type="radio" name="app-theme" value="theme-emerald">
+            <div class="theme-card theme-preview-emerald">
+              <div class="color-dot"></div>
+              <span>Emerald</span>
+            </div>
+          </label>
+
+          <label class="theme-option">
+            <input type="radio" name="app-theme" value="theme-sunset">
+            <div class="theme-card theme-preview-sunset">
+              <div class="color-dot"></div>
+              <span>Sunset</span>
+            </div>
+          </label>
+        </div>
+      </section>
+
+      <!-- Section 3: Font Size & Preferences -->
+      <section class="form-group">
+        <label for="select-font-size" class="form-label">
+          <span>🔤</span> Cỡ chữ giao diện
+        </label>
+        <select id="select-font-size" class="form-control">
+          <option value="font-sm">Nhỏ gọn (Compact - 13px)</option>
+          <option value="font-md" selected>Tiêu chuẩn (Standard - 14px)</option>
+          <option value="font-lg">Lớn (Comfortable - 16px)</option>
+        </select>
+      </section>
+
+      <!-- Section 4: Live Feedback Status -->
+      <div id="status-toast" class="status-toast" style="display: none;">
+        ✨ Cài đặt đã được truyền sang Cửa Sổ Chính!
+      </div>
+    </main>
+
+    <!-- Footer Actions -->
+    <footer class="settings-footer">
+      <button id="btn-cancel" class="btn btn-secondary">Đóng</button>
+      <button id="btn-save-settings" class="btn btn-primary">
+        <span>💾</span> Áp Dụng & Đồng Bộ
+      </button>
+    </footer>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>

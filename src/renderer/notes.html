@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ghi Chú & Soạn Thảo (Local Tab)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      padding: 24px;
+      background: radial-gradient(circle at top right, #1e1b4b 0%, #090d16 80%);
+      color: #f1f5f9;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .notes-container {
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .notes-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .notes-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .notes-icon {
+      font-size: 24px;
+      background: rgba(99, 102, 241, 0.2);
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+    .notes-editor-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      min-height: 0;
+    }
+    .notes-textarea {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #f1f5f9;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      resize: none;
+      outline: none;
+    }
+    .notes-statusbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    .badge-local {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 11px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
+  </style>
+</head>
+<body>
+  <div class="notes-container">
+    <!-- Header của Local Tab -->
+    <div class="notes-header">
+      <div class="notes-title-group">
+        <span class="notes-icon">📝</span>
+        <div>
+          <h2 style="font-size: 1.2rem; font-weight: 700; color: #f8fafc;">Tab Nội Bộ: Soạn Thảo & Ghi Chú Nhanh</h2>
+          <p style="font-size: 0.8rem; color: #94a3b8;">Chạy bằng file <code>notes.html</code> cục bộ thông qua <code>WebContentsView</code> + Preload IPC.</p>
+        </div>
+      </div>
+      <span class="badge-local">⚡ Native Local Tab (Sandbox Isolated)</span>
+    </div>
+
+    <!-- Vùng soạn thảo -->
+    <div class="notes-editor-wrapper">
+      <textarea id="notes-content" class="notes-textarea" placeholder="Nhập nội dung ghi chú hoặc code tại đây...
+Đây là một Tab nội bộ (Local View) chạy song song và độc lập với Dashboard!
+Bạn có thể mở nhiều tab ghi chú cùng lúc."></textarea>
+      
+      <div class="notes-statusbar">
+        <div style="display: flex; gap: 16px;">
+          <span id="char-count">0 ký tự</span>
+          <span id="word-count">0 từ</span>
+          <span id="line-count">1 dòng</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button id="btn-save-disk" class="btn btn-primary" style="font-size: 12px; padding: 5px 12px;">
+            💾 Lưu File Vật Lý (Native Dialog)
+          </button>
+          <button id="btn-clear-notes" class="btn btn-secondary" style="font-size: 12px; padding: 5px 12px;">
+            🧹 Xóa Hết
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vùng IPC Broadcast Liên Tab (Giai đoạn 4 - Bài 2) -->
+    <div style="background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 12px; font-weight: 600; color: #c084fc;">📡 Nhắn Tin Phát Sóng Liên Tab (Broadcast to All Tabs):</span>
+        <span id="notes-broadcast-time" style="font-size: 11px; color: #64748b;">Thời gian thực</span>
+      </div>
+      
+      <div style="display: flex; gap: 8px;">
+        <input 
+          type="text" 
+          id="notes-broadcast-input" 
+          placeholder="Nhập tin nhắn từ Tab Ghi Chú để bắn sang Dashboard & các tab khác..." 
+          style="flex: 1; background: #030712; border: 1px solid rgba(255, 255, 255, 0.1); color: #f1f5f9; padding: 6px 12px; border-radius: 6px; font-size: 12px; outline: none;"
+        />
+        <button id="btn-notes-broadcast-send" class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; background: linear-gradient(135deg, #a855f7, #6366f1); border-color: #a855f7;">
+          Gửi Phát Sóng
+        </button>
+      </div>
+
+      <div id="notes-broadcast-feed" style="background: #030712; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 6px; padding: 8px 10px; max-height: 70px; overflow-y: auto; font-family: monospace; font-size: 11px; color: #94a3b8; display: flex; flex-direction: column; gap: 4px;">
+        <div style="color: #64748b; font-style: italic;">Chưa có tin nhắn nào được nhận.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const textarea = document.getElementById('notes-content');
+    const charCount = document.getElementById('char-count');
+    const wordCount = document.getElementById('word-count');
+    const lineCount = document.getElementById('line-count');
+    const btnSave = document.getElementById('btn-save-disk');
+    const btnClear = document.getElementById('btn-clear-notes');
+
+    // Broadcast elements
+    const notesBroadcastInput = document.getElementById('notes-broadcast-input');
+    const btnNotesBroadcastSend = document.getElementById('btn-notes-broadcast-send');
+    const notesBroadcastFeed = document.getElementById('notes-broadcast-feed');
+
+    // Khởi tạo BroadcastChannel Web API chuẩn HTML5 (P2P liên tab)
+    const liveChannel = new BroadcastChannel('app_live_channel');
+
+    // Tự động tính số lượng ký tự, từ, dòng và phát sóng realtime qua BroadcastChannel
+    function updateStats() {
+      const text = textarea.value;
+      charCount.textContent = `${text.length} ký tự`;
+      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+      wordCount.textContent = `${words} từ`;
+      const lines = text.split('\n').length;
+      lineCount.textContent = `${lines} dòng`;
+
+      // ⚡ Phát sóng thông số gõ phím trực tiếp qua BroadcastChannel sang Dashboard!
+      liveChannel.postMessage({
+        type: 'NOTES_TYPING',
+        words: words,
+        chars: text.length,
+        lines: lines,
+        timestamp: new Date().toLocaleTimeString('vi-VN')
+      });
+    }
+
+    textarea.addEventListener('input', updateStats);
+    updateStats();
+
+    // 1. Thao tác Lưu file vật lý qua IPC (Kế thừa từ Giai đoạn 2 - Bài 3)
+    btnSave.addEventListener('click', async () => {
+      const content = textarea.value;
+      if (!content.trim()) {
+        alert('Vui lòng nhập nội dung trước khi lưu!');
+        return;
+      }
+
+      if (window.electronAPI?.saveFile) {
+        const result = await window.electronAPI.saveFile(content);
+        if (result.success) {
+          alert(`Đã lưu file thành công vào: ${result.filePath}`);
+        }
+      }
+    });
+
+    // 2. Thao tác Xóa sạch
+    btnClear.addEventListener('click', () => {
+      textarea.value = '';
+      updateStats();
+      textarea.focus();
+    });
+
+    // 3. GIAI ĐOẠN 4 - BÀI 2: PHÁT SÓNG TIN NHẮN TỪ TAB GHI CHÚ QUA BROADCASTCHANNEL
+    btnNotesBroadcastSend?.addEventListener('click', () => {
+      const text = notesBroadcastInput?.value.trim();
+      if (!text) return;
+
+      const payload = {
+        type: 'CHAT',
+        sender: '📝 Tab Ghi Chú',
+        text: text,
+        timestamp: new Date().toLocaleTimeString('vi-VN')
+      };
+
+      // ⚡ 1. Bắn trực tiếp qua BroadcastChannel Web API (Renderer-to-Renderer)
+      liveChannel.postMessage(payload);
+
+      // Hiển thị tin nhắn của chính mình trên feed
+      if (notesBroadcastFeed) {
+        if (notesBroadcastFeed.querySelector('div[style*="font-style: italic"]')) {
+          notesBroadcastFeed.innerHTML = '';
+        }
+        const msgEl = document.createElement('div');
+        msgEl.innerHTML = `<span style="color: #64748b;">[${payload.timestamp}]</span> <strong style="color: #38bdf8;">Bạn (Tab Ghi Chú):</strong> <span style="color: #f1f5f9;">${payload.text}</span>`;
+        notesBroadcastFeed.appendChild(msgEl);
+        notesBroadcastFeed.scrollTop = notesBroadcastFeed.scrollHeight;
+      }
+
+      // 2. Kích hoạt thêm qua Main IPC để ghi log vào terminal
+      window.electronAPI?.broadcastMessage?.(text);
+
+      notesBroadcastInput.value = '';
+    });
+
+    notesBroadcastInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        btnNotesBroadcastSend?.click();
+      }
+    });
+
+    // 4. LẮNG NGHE TRỰC TIẾP TỪ BROADCASTCHANNEL WEB API
+    liveChannel.onmessage = (event) => {
+      const data = event.data;
+      if (!data) return;
+
+      // Nhận tin nhắn chat từ Dashboard hoặc Tab khác
+      if (data.type === 'CHAT' && data.sender !== '📝 Tab Ghi Chú') {
+        if (notesBroadcastFeed) {
+          if (notesBroadcastFeed.querySelector('div[style*="font-style: italic"]')) {
+            notesBroadcastFeed.innerHTML = '';
+          }
+          const msgEl = document.createElement('div');
+          msgEl.innerHTML = `<span style="color: #64748b;">[${data.timestamp}]</span> <strong style="color: #c084fc;">${data.sender}:</strong> <span style="color: #e2e8f0;">${data.text}</span>`;
+          notesBroadcastFeed.appendChild(msgEl);
+          notesBroadcastFeed.scrollTop = notesBroadcastFeed.scrollHeight;
+        }
+      }
+
+      // Nhận sự kiện đồng bộ theme trực tiếp qua BroadcastChannel
+      if (data.type === 'THEME_SYNC') {
+        applyTheme(data.theme);
+      }
+    };
+
+    // 5. GIAI ĐOẠN 4 - BÀI 2: ĐỒNG BỘ THEME REALTIME QUA BROADCAST
+    const themeBackgrounds = {
+      'theme-default': 'radial-gradient(circle at top right, #1e1b4b 0%, #090d16 80%)',
+      'theme-cyberpunk': 'radial-gradient(circle at top right, #3b0764 0%, #050505 80%)',
+      'theme-emerald': 'radial-gradient(circle at top right, #064e3b 0%, #021f17 80%)',
+      'theme-sunset': 'radial-gradient(circle at top right, #7c2d12 0%, #1c0903 80%)'
+    };
+
+    function applyTheme(themeName) {
+      if (themeBackgrounds[themeName]) {
+        document.body.style.background = themeBackgrounds[themeName];
+      }
+    }
+
+    // Lắng nghe đổi theme từ Cửa sổ Settings
+    if (window.electronAPI?.onSettingsChanged) {
+      window.electronAPI.onSettingsChanged((newSettings) => {
+        if (newSettings?.theme) {
+          applyTheme(newSettings.theme);
+        }
+      });
+    }
+
+    // Lấy cấu hình ban đầu
+    if (window.electronAPI?.getSettings) {
+      window.electronAPI.getSettings().then((cfg) => {
+        if (cfg?.theme) {
+          applyTheme(cfg.theme);
+        }
+      }).catch(console.error);
+    }
+  </script>
+</body>
+</html>
