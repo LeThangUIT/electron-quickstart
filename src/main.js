@@ -160,6 +160,7 @@ ipcMain.on('renderer:ping-main', (event, data) => {
 ipcMain.handle('system:get-info', async () => {
   // Main Process có toàn quyền truy cập Node.js & OS
   return {
+    appVersion: app.getVersion(),
     platform: process.platform,
     arch: process.arch,
     hostname: os.hostname(),
