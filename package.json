@@ -1,6 +1,6 @@
 {
   "name": "electron-stage-1-starter",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Thực hành Electron Giai đoạn 1: Kiến trúc cốt lõi & IPC bảo mật",
   "main": "src/main.js",
   "scripts": {

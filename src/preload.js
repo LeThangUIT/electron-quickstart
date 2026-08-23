@@ -80,9 +80,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // GIAI ĐOẠN 3 - BÀI 3: CUSTOM TITLEBAR IPC
   // ==========================================
   minimizeWindow: () => ipcRenderer.invoke('window:minimize'),
+  maximizeWindow: () => ipcRenderer.invoke('window:toggle-maximize'),
   toggleMaximizeWindow: () => ipcRenderer.invoke('window:toggle-maximize'),
   closeWindow: () => ipcRenderer.invoke('window:close'),
   isWindowMaximized: () => ipcRenderer.invoke('window:is-maximized'),
+  onMaximizedState: (callback) => {
+    const subscription = (_event, isMaximized) => callback(isMaximized);
+    ipcRenderer.on('window:maximized-state', subscription);
+    return () => ipcRenderer.removeListener('window:maximized-state', subscription);
+  },
   onMaximizeChange: (callback) => {
     const subscription = (_event, isMaximized) => callback(isMaximized);
     ipcRenderer.on('window:maximized-state', subscription);

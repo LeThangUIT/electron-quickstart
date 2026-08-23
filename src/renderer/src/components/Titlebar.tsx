@@ -20,7 +20,11 @@ export const Titlebar: React.FC = () => {
 
   const handleMaximize = async () => {
     const res = await window.electronAPI?.maximizeWindow();
-    if (res) setIsMaximized(res.isMaximized);
+    if (typeof res === 'boolean') {
+      setIsMaximized(res);
+    } else if (res && typeof res.isMaximized === 'boolean') {
+      setIsMaximized(res.isMaximized);
+    }
   };
 
   const handleClose = () => {
